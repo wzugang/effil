@@ -4,6 +4,7 @@
 #include "notifier.h"
 #include "spin-mutex.h"
 #include "utils.h"
+#include "garbage-collector.h"
 
 #include <thread>
 #include <sstream>
@@ -118,6 +119,8 @@ void Thread::runThread(Thread thread,
     thisThreadHandle = thread.ctx_.get();
     assert(thisThreadHandle != nullptr);
 
+    DEBUG("thread") << "Run new thread:" << std::this_thread::get_id();
+
     try {
         {
             ScopeGuard reportComplete([thread, &arguments](){
@@ -144,7 +147,7 @@ void Thread::runThread(Thread thread,
     } catch (const LuaHookStopException&) {
         thread.ctx_->changeStatus(Status::Canceled);
     } catch (const sol::error& err) {
-        DEBUG << "Failed with msg: " << err.what() << std::endl;
+        DEBUG("thread") << "Failed with msg: " << err.what() << std::endl;
         auto& returns = thread.ctx_->result();
         returns.insert(returns.begin(),
                 { createStoredObject("failed"),
@@ -184,6 +187,11 @@ Thread::Thread(const std::string& path,
        int step,
        const sol::function& function,
        const sol::variadic_args& variadicArgs) {
+
+    DEBUG("thread") << "Create new thread:" << std::endl
+                    << "\tpath: "  << path  << std::endl
+                    << "\tcpath: " << cpath << std::endl
+                    << "\tstep: "  << step;
 
     sol::optional<Function> functionObj;
     try {

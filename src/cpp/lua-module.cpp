@@ -2,6 +2,7 @@
 #include "shared-table.h"
 #include "garbage-collector.h"
 #include "channel.h"
+#include "cache.h"
 
 #include <lua.hpp>
 

@@ -3,13 +3,13 @@
 #include "gc-data.h"
 #include "utils.h"
 #include "lua-helpers.h"
-#include "gc-object.h"
+#include "cache.h"
 
 namespace effil {
 
 sol::object luaAllowTableUpvalues(sol::this_state state, const sol::stack_object&);
 
-class FunctionData : public GCData {
+class FunctionData : public CachedGCData {
 public:
     std::string function;
 #if LUA_VERSION_NUM > 501

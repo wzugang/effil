@@ -38,6 +38,8 @@ test.type_mismatch.unsupported_type_p = function(wrong_arg_num, func_name, ...)
 end
 
 local function generate_tests()
+    print "Start test generation for 'type_mismatch' test suite"
+
     local function create_object_generator(name, func)
         return setmetatable({ name = name }, {
             __call = func,

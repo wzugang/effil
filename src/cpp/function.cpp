@@ -1,4 +1,5 @@
 #include "function.h"
+#include "cache.h"
 
 namespace effil {
 
@@ -28,7 +29,7 @@ Function::Function(const sol::function& luaObject) {
     assert(luaObject.valid());
     assert(luaObject.get_type() == sol::type::function);
 
-    lua_State* state = luaObject.lua_state();
+    sol::state_view state = luaObject.lua_state();
     sol::stack::push(state, luaObject);
 
     lua_Debug dbgInfo;
@@ -76,10 +77,16 @@ Function::Function(const sol::function& luaObject) {
         }
         ctx_->upvalues[i - 1] = std::move(storedObject);
     }
-    sol::stack::pop<sol::object>(state);
+    cache::put(state, handle(), sol::stack::pop<sol::object>(state));
 }
 
 sol::object Function::loadFunction(lua_State* state) {
+    auto cachedFunc = cache::get(state, handle());
+    if (cachedFunc)
+    {
+        return cachedFunc.value();
+    }
+
     sol::function result = loadString(state, ctx_->function);
     assert(result.valid());
 

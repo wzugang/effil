@@ -127,6 +127,7 @@ void Thread::runThread(Thread thread,
                 // Let's destroy accociated state
                 // to release all resources as soon as possible
                 arguments.clear();
+                cache::removeStateCache(thread.ctx_->lua());
                 thread.ctx_->destroyLua();
             });
             sol::function userFuncObj = function.loadFunction(thread.ctx_->lua());

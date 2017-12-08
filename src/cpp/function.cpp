@@ -77,7 +77,6 @@ Function::Function(const sol::function& luaObject) {
         }
         ctx_->upvalues[i - 1] = std::move(storedObject);
     }
-    cache::put(state, handle(), sol::stack::pop<sol::object>(state));
 }
 
 sol::object Function::loadFunction(lua_State* state) {
@@ -105,7 +104,9 @@ sol::object Function::loadFunction(lua_State* state) {
         sol::stack::push(state, obj);
         lua_setupvalue(state, -2, i + 1);
     }
-    return sol::stack::pop<sol::function>(state);
+    const auto obj = sol::stack::pop<sol::object>(state);
+    cache::put(state, handle(), obj);
+    return obj;
 }
 
 } // namespace effil

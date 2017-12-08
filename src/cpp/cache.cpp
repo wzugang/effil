@@ -19,7 +19,7 @@ void removeFromCache(GCHandle handle) {
     auto luaStorage = cacheStorage.find(handle);
     if (luaStorage != cacheStorage.end())
     {
-        for (const auto stateStorage: luaStorage->second)
+        for (const auto& stateStorage: luaStorage->second)
         {
             DEBUG("cache") << "remove object from state" << std::hex << stateStorage.first;
             luaL_unref(stateStorage.first, LUA_REGISTRYINDEX, stateStorage.second);
@@ -86,7 +86,7 @@ void removeStateCache(lua_State* lua)
         const auto& iter = storage.find(lua);
         if (iter != storage.end())
         {
-            DEBUG("cache") << "STATE REMOVED" << std::hex << lua;
+            luaL_unref(lua, LUA_REGISTRYINDEX, iter->second);
             storage.erase(iter);
         }
     }

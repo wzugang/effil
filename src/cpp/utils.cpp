@@ -7,7 +7,7 @@ namespace effil {
 
 Logger getLogger() {
     static std::mutex lock;
-    static const char* logFile = getenv("EFFIL_LOGFILE");
+    static const char* logFile = getenv("EFFIL_LOG");
 
     if (logFile == nullptr) {
         static std::ostream devNull(0);
@@ -17,7 +17,7 @@ Logger getLogger() {
         return Logger(std::cout, lock);
     }
     else {
-        static std::ofstream fileStream(logFile == nullptr ? "" : logFile);
+        static std::ofstream fileStream(logFile);
         return Logger(fileStream, lock);
     }
 }
